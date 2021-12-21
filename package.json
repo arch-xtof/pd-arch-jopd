@@ -20,7 +20,8 @@
   "homepage": "https://github.com/arch-xtof/pd-arch-jopd#readme",
   "dependencies": {
     "axios": "^0.24.0",
-    "express": "^4.17.2"
+    "express": "^4.17.2",
+    "swagger-ui-express": "^4.3.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

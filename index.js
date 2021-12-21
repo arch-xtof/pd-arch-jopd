@@ -1,7 +1,12 @@
 const express = require("express");
 const axios = require("axios");
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
+const apiUrl = "http://play.grafana.org";
 const app = express();
+
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get("/api/dashboards/:uid", async (request, response) => {
   let uid = request.params.uid;
@@ -9,21 +14,33 @@ app.get("/api/dashboards/:uid", async (request, response) => {
 
   if (uid?.length <= 40) {
     await axios
-      .get("http://play.grafana.org/api/dashboards/uid/" + uid)
+      .get(apiUrl + "/api/dashboards/uid/" + uid)
       .then((res) => {
-        const dashboard = res.data;
+        const data = res.data;
 
-        responseObject.status = "success";
-        responseObject.data = dashboard;
+        responseObject.uid = data.dashboard.uid;
+        responseObject.title = data.dashboard.title;
+        responseObject.url = apiUrl + data.meta.url;
+        responseObject.folderName = data.meta.folderTitle;
+        responseObject.datasources = [];
+        data.dashboard.panels.forEach((panel) => {
+          if (
+            panel.datasource !== null &&
+            !responseObject.datasources.includes(panel.datasource)
+          ) {
+            responseObject.datasources.push(panel.datasource);
+          }
+        });
       })
       .catch((error) => {
-        responseObject.status = "error";
+        response.status(404)
         responseObject.error = "uid not found";
       });
   } else {
-    responseObject.status = "error";
+    response.status(400)
     responseObject.error = "uid longer than 40";
   }
+  response.set('Access-Control-Allow-Origin', '*');
   response.json(responseObject);
 });
 
