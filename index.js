@@ -1,12 +1,12 @@
 const express = require("express");
 const axios = require("axios");
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger.json");
 
 const apiUrl = "http://play.grafana.org";
 const app = express();
 
-app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get("/api/dashboards/:uid", async (request, response) => {
   let uid = request.params.uid;
@@ -33,14 +33,14 @@ app.get("/api/dashboards/:uid", async (request, response) => {
         });
       })
       .catch((error) => {
-        response.status(404)
+        response.status(404);
         responseObject.error = "uid not found";
       });
   } else {
-    response.status(400)
+    response.status(400);
     responseObject.error = "uid longer than 40";
   }
-  response.set('Access-Control-Allow-Origin', '*');
+  response.set("Access-Control-Allow-Origin", "*");
   response.json(responseObject);
 });
 
