@@ -29,7 +29,6 @@ app.get("/api/dashboards/:uid", async (request, response) => {
           if (datasourceName !== null) {
             datasourceCreated = false;
             responseObject.datasources.forEach((item) => {
-              console.log(datasourceName + " == " + item.name);
               if (datasourceName == item.name) {
                 datasourceCreated = true;
               }
