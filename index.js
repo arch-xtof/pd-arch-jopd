@@ -16,7 +16,7 @@ app.get("/api/dashboards/:uid", async (request, response) => {
     await axios
       .get(apiUrl + "/api/dashboards/uid/" + uid)
       .then((res) => {
-        transformDashboardJson(res, responseObject);
+        transformDashboardJson(res.data, responseObject);
       })
       .catch((error) => {
         response.status(404);
@@ -30,8 +30,7 @@ app.get("/api/dashboards/:uid", async (request, response) => {
   response.json(responseObject);
 });
 
-function transformDashboardJson(res, responseObject) {
-  const data = res.data;
+function transformDashboardJson(data, responseObject) {
 
   responseObject.uid = data.dashboard.uid;
   responseObject.title = data.dashboard.title;
