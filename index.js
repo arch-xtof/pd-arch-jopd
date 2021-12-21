@@ -16,39 +16,7 @@ app.get("/api/dashboards/:uid", async (request, response) => {
     await axios
       .get(apiUrl + "/api/dashboards/uid/" + uid)
       .then((res) => {
-        const data = res.data;
-
-        responseObject.uid = data.dashboard.uid;
-        responseObject.title = data.dashboard.title;
-        responseObject.url = apiUrl + data.meta.url;
-        responseObject.folderName = data.meta.folderTitle;
-        responseObject.datasources = [];
-
-        data.dashboard.panels.forEach((panel) => {
-          let datasourceName = panel.datasource;
-          if (datasourceName !== null) {
-            datasourceCreated = false;
-            responseObject.datasources.forEach((item) => {
-              if (datasourceName == item.name) {
-                datasourceCreated = true;
-              }
-            });
-            if (!datasourceCreated) {
-              responseObject.datasources.push({
-                name: datasourceName,
-                panels: [],
-              });
-            }
-            responseObject.datasources.forEach((item) => {
-              if (item.name === datasourceName) {
-                item.panels.push({
-                  id: panel.id,
-                  title: panel.title,
-                });
-              }
-            });
-          }
-        });
+        transformDashboardJson(res, responseObject);
       })
       .catch((error) => {
         response.status(404);
@@ -61,6 +29,42 @@ app.get("/api/dashboards/:uid", async (request, response) => {
   response.set("Access-Control-Allow-Origin", "*");
   response.json(responseObject);
 });
+
+function transformDashboardJson(res, responseObject) {
+  const data = res.data;
+
+  responseObject.uid = data.dashboard.uid;
+  responseObject.title = data.dashboard.title;
+  responseObject.url = apiUrl + data.meta.url;
+  responseObject.folderName = data.meta.folderTitle;
+  responseObject.datasources = [];
+
+  data.dashboard.panels.forEach((panel) => {
+    let datasourceName = panel.datasource;
+    if (datasourceName !== null) {
+      datasourceCreated = false;
+      responseObject.datasources.forEach((item) => {
+        if (datasourceName == item.name) {
+          datasourceCreated = true;
+        }
+      });
+      if (!datasourceCreated) {
+        responseObject.datasources.push({
+          name: datasourceName,
+          panels: [],
+        });
+      }
+      responseObject.datasources.forEach((item) => {
+        if (item.name === datasourceName) {
+          item.panels.push({
+            id: panel.id,
+            title: panel.title,
+          });
+        }
+      });
+    }
+  });
+}
 
 const PORT = 3001;
 app.listen(PORT);
