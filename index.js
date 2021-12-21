@@ -23,12 +23,24 @@ app.get("/api/dashboards/:uid", async (request, response) => {
         responseObject.url = apiUrl + data.meta.url;
         responseObject.folderName = data.meta.folderTitle;
         responseObject.datasources = [];
+
         data.dashboard.panels.forEach((panel) => {
-          if (
-            panel.datasource !== null &&
-            !responseObject.datasources.includes(panel.datasource)
-          ) {
-            responseObject.datasources.push(panel.datasource);
+          let datasouceName = panel.datasource;
+          if (datasouceName !== null) {
+            if (!responseObject.datasources.includes(datasouceName)) {
+              responseObject.datasources.push({
+                name: datasouceName,
+                panels: [],
+              });
+            }
+            responseObject.datasources.forEach((item) => {
+              if (item.name === datasouceName) {
+                item.panels.push({
+                  id: panel.id,
+                  title: panel.title,
+                });
+              }
+            });
           }
         });
       })
