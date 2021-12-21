@@ -25,16 +25,23 @@ app.get("/api/dashboards/:uid", async (request, response) => {
         responseObject.datasources = [];
 
         data.dashboard.panels.forEach((panel) => {
-          let datasouceName = panel.datasource;
-          if (datasouceName !== null) {
-            if (!responseObject.datasources.includes(datasouceName)) {
+          let datasourceName = panel.datasource;
+          if (datasourceName !== null) {
+            datasourceCreated = false;
+            responseObject.datasources.forEach((item) => {
+              console.log(datasourceName + " == " + item.name);
+              if (datasourceName == item.name) {
+                datasourceCreated = true;
+              }
+            });
+            if (!datasourceCreated) {
               responseObject.datasources.push({
-                name: datasouceName,
+                name: datasourceName,
                 panels: [],
               });
             }
             responseObject.datasources.forEach((item) => {
-              if (item.name === datasouceName) {
+              if (item.name === datasourceName) {
                 item.panels.push({
                   id: panel.id,
                   title: panel.title,
