@@ -3,7 +3,7 @@
   "info": {
     "version": "1.0.0",
     "title": "Swagger UI",
-    "description": "Retrieve Grafana dashboard info",
+    "description": "Retrieve information fro Grafana API",
     "contact": {
       "email": "archil.kristinashvili@gmail.com"
     }
@@ -16,7 +16,7 @@
     "/api/dashboards/{uid}": {
       "get": {
         "tags": ["Dashboards"],
-        "description": "List users",
+        "description": "Retrieve dashboard info",
         "produces": ["application/json"],
         "parameters": [
           {
