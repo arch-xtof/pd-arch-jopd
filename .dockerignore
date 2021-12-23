@@ -1,0 +1,5 @@
+.git
+.gitignore
+node_modules
+redis.conf
+README.md
