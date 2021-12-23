@@ -13,12 +13,7 @@ const client = redis.createClient({
 
 client.on("error", () => console.log("error"));
 
-console.log(client);
-
-//(async () => {
-//  client.on('error', (err) => console.log('Redis Client Error', err));
-//  await client.connect();
-//})();
+client.ping();
 
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
