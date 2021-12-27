@@ -1,6 +1,16 @@
 version: "3.6"
 services:
-  nodejs:
+  redis:
+    image: redis
+    container_name: cache
+    command: redis-server
+    expose:
+      - 6379
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - ALLOW_EMPTY_PASSWORD=yes
+
+  app:
     build:
       context: ./
       target: dev
@@ -10,26 +20,8 @@ services:
     ports:
       - "3001:3001"
     environment:
-      NODE_ENV: development
-      DEBUG: pd-arch-jopd:*
-
-  redis:
-    image: "redis:alpine"
-    command: redis-server
-    ports:
-      - "6379:6379"
-    volumes:
-      - ./redis-data:/var/lib/redis
-      - ./redis.conf:/usr/local/etc/redis/redis.conf
-    environment:
-      - REDIS_REPLICATION_MODE=master
-    networks:
-      api_net:
-        ipv4_address: 172.28.1.1
-
-networks:
-  api_net:
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.28.0.0/16
+      - NODE_ENV=development
+      - DEBUG=pd-arch-jopd:*
+      - REDIS_URL=redis://cache
+    links:
+      - redis

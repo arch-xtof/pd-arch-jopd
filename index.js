@@ -4,16 +4,17 @@ const redis = require("redis");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
 
-const apiUrl = "http://play.grafana.org";
-const app = express();
 const client = redis.createClient({
-  host: '172.28.1.1',
-  port: 6379
+  url: `${process.env.REDIS_URL}`,
 });
 
-client.on("error", () => console.log("error"));
+(async () => {
+  client.on("error", (err) => console.log("Redis Client Error", err));
+  await client.connect();
+})();
 
-client.ping();
+const apiUrl = "http://play.grafana.org";
+const app = express();
 
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
@@ -48,34 +49,37 @@ app.get("/api/dashboards/:uid", async (request, response) => {
       });
     }
 
-    client.get(uid, async (err, dashboardInfo) => {
-      console.log("---yle---");
-      if (dashboardInfo) {
-        return response.status(200).send(JSON.parse(dashboardInfo));
-      } else {
-        const dashboardInfo = {};
-        await axios
-          .get(`${apiUrl}/api/dashboards/uid/${uid}`)
-          .then((axiosResponse) => {
-            transformDashboardJson(axiosResponse.data, dashboardInfo);
-          })
-          .catch((error) => {
-            return response.status(404).send({
-              message: error,
-            });
-          });
+    // TODO add logging
+    let dashboardInfo = await client.get(uid);
 
-        client.setex(uid, 1440, JSON.stringify(dashboardInfo));
-
-        return response.status(200).send(JSON.parse(dashboardInfo));
+    if (dashboardInfo) {
+      response.status(200).send(JSON.parse(dashboardInfo));
+    } else {
+      try {
+        const axiosResponse = await axios.get(
+          `${apiUrl}/api/dashboards/uid/${uid}`
+        );
+        dashboardInfo = transformDashboardJson(axiosResponse.data);
+        response.status(200).send(dashboardInfo);
+        await client.set(uid, JSON.stringify(dashboardInfo));
+      } catch (error) {
+        dashboardInfo = error.response.data;
+        response.status(error.response.status).send(error.response.data);
       }
-    });
+    }
   } catch (error) {
     console.log(error);
   }
 });
 
-function transformDashboardJson(data, responseObject) {
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
+
+function transformDashboardJson(data) {
+  // TODO implement maps
+  const responseObject = {};
   responseObject.uid = data.dashboard.uid;
   responseObject.title = data.dashboard.title;
   responseObject.url = apiUrl + data.meta.url;
@@ -107,8 +111,5 @@ function transformDashboardJson(data, responseObject) {
       });
     }
   });
+  return responseObject;
 }
-
-const PORT = 3001;
-app.listen(PORT);
-console.log(`Server running on port ${PORT}`);
