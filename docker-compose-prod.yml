@@ -21,6 +21,7 @@ services:
     environment:
       - NODE_ENV=production
       - DEBUG=pd-arch-jopd:*
+      - API_URL=http://play.grafana.org
       - REDIS_URL=redis://cache
     links:
       - redis

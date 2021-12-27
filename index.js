@@ -16,7 +16,7 @@ const client = redis.createClient({
   await client.connect();
 })();
 
-const apiUrl = "http://play.grafana.org";
+const apiUrl = process.env.API_URL;
 const app = express();
 
 app.use(morgan('combined'))
