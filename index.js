@@ -1,9 +1,11 @@
 const express = require("express");
 const axios = require("axios");
 const redis = require("redis");
+const dash = require("./utils/dashboardToData");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
 const morgan = require('morgan');
+const { dashboardToData } = require("./utils/dashboardToData");
 
 const client = redis.createClient({
   url: `${process.env.REDIS_URL}`,
@@ -38,7 +40,7 @@ app.get("/api/dashboards/:uid", async (request, response) => {
         const axiosResponse = await axios.get(
           `${apiUrl}/api/dashboards/uid/${uid}`
         );
-        dashboardInfo = transformDashboardJson(axiosResponse.data);
+        dashboardInfo = dash.dashboardToData(axiosResponse.data);
         response.status(200).send(dashboardInfo);
         await client.set(uid, JSON.stringify(dashboardInfo));
       } catch (error) {
@@ -55,39 +57,3 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
-
-function transformDashboardJson(data) {
-  let myMap = new Map(Object.entries(data));
-  const responseObject = {};
-
-  responseObject.uid = data.dashboard.uid;
-  responseObject.title = data.dashboard.title;
-  responseObject.url = apiUrl + data.meta.url;
-  responseObject.folderName = data.meta.folderTitle;
-  responseObject.datasources = [];
-
-  myMap.get("dashboard").panels.find((e) => {
-    if (
-      e?.datasource &&
-      !responseObject.datasources.some((t) => {
-        return t.name === e.datasource;
-      })
-    ) {
-      responseObject.datasources.push({
-        name: e.datasource,
-        panels: [],
-      });
-    }
-
-    responseObject.datasources.find((d) => {
-      if (d.name === e.datasource) {
-        d.panels.push({
-          id: e.id,
-          title: e.title,
-        });
-      }
-    });
-  });
-
-  return responseObject;
-}
