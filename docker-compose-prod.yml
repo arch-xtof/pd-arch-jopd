@@ -9,6 +9,7 @@ services:
     environment:
       - REDIS_REPLICATION_MODE=master
       - ALLOW_EMPTY_PASSWORD=yes
+    restart: on-failure:5
 
   app:
     build:
@@ -23,3 +24,4 @@ services:
       - REDIS_URL=redis://cache
     links:
       - redis
+    restart: on-failure:5
