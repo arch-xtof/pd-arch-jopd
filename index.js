@@ -3,6 +3,7 @@ const axios = require("axios");
 const redis = require("redis");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
+const morgan = require('morgan');
 
 const client = redis.createClient({
   url: `${process.env.REDIS_URL}`,
@@ -16,6 +17,7 @@ const client = redis.createClient({
 const apiUrl = "http://play.grafana.org";
 const app = express();
 
+app.use(morgan('combined'))
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get("/api/dashboards/:uid", async (request, response) => {
@@ -27,7 +29,6 @@ app.get("/api/dashboards/:uid", async (request, response) => {
       });
     }
 
-    // TODO add logging
     let dashboardInfo = await client.get(uid);
 
     if (dashboardInfo) {
@@ -56,38 +57,37 @@ app.listen(PORT, () => {
 });
 
 function transformDashboardJson(data) {
-  // TODO implement maps
+  let myMap = new Map(Object.entries(data));
   const responseObject = {};
+
   responseObject.uid = data.dashboard.uid;
   responseObject.title = data.dashboard.title;
   responseObject.url = apiUrl + data.meta.url;
   responseObject.folderName = data.meta.folderTitle;
   responseObject.datasources = [];
 
-  data.dashboard.panels.forEach((panel) => {
-    let datasourceName = panel.datasource;
-    if (datasourceName !== null) {
-      datasourceCreated = false;
-      responseObject.datasources.forEach((item) => {
-        if (datasourceName == item.name) {
-          datasourceCreated = true;
-        }
-      });
-      if (!datasourceCreated) {
-        responseObject.datasources.push({
-          name: datasourceName,
-          panels: [],
-        });
-      }
-      responseObject.datasources.forEach((item) => {
-        if (item.name === datasourceName) {
-          item.panels.push({
-            id: panel.id,
-            title: panel.title,
-          });
-        }
+  myMap.get("dashboard").panels.find((e) => {
+    if (
+      e?.datasource &&
+      !responseObject.datasources.some((t) => {
+        return t.name === e.datasource;
+      })
+    ) {
+      responseObject.datasources.push({
+        name: e.datasource,
+        panels: [],
       });
     }
+
+    responseObject.datasources.find((d) => {
+      if (d.name === e.datasource) {
+        d.panels.push({
+          id: e.id,
+          title: e.title,
+        });
+      }
+    });
   });
+
   return responseObject;
 }
