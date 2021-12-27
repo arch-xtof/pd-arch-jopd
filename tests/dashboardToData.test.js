@@ -225,7 +225,7 @@ describe("dashboardToData", () => {
       );
     });
 
-    it("multiple datasources multiple panels", () => {
+    it("malformed dashboard file", () => {
       expect(JSON.stringify(dash.dashboardToData({random: "malformation"}, ""))).toBe(
         JSON.stringify({ message: "dashboard is malformed"})
       );
