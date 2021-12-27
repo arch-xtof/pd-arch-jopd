@@ -18,28 +18,6 @@ const app = express();
 
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.get("/old/dashboards/:uid", async (request, response) => {
-  let uid = request.params.uid;
-  const responseObject = {};
-
-  if (uid?.length <= 40) {
-    await axios
-      .get(`${apiUrl}/api/dashboards/uid/${uid}`)
-      .then((res) => {
-        transformDashboardJson(res.data, responseObject);
-      })
-      .catch((error) => {
-        response.status(404);
-        responseObject.error = "uid not found";
-      });
-  } else {
-    response.status(400);
-    responseObject.error = "uid longer than 40";
-  }
-  response.set("Access-Control-Allow-Origin", "*");
-  response.json(responseObject);
-});
-
 app.get("/api/dashboards/:uid", async (request, response) => {
   try {
     let uid = request.params.uid;
