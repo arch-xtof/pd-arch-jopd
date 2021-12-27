@@ -1,0 +1,25 @@
+version: "3.6"
+services:
+  redis:
+    image: redis
+    container_name: cache
+    command: redis-server
+    expose:
+      - 6379
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - ALLOW_EMPTY_PASSWORD=yes
+
+  app:
+    build:
+      context: ./
+      target: production
+    command: npm run start
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - DEBUG=pd-arch-jopd:*
+      - REDIS_URL=redis://cache
+    links:
+      - redis

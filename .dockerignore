@@ -1,5 +1,7 @@
 .git
 .gitignore
-node_modules
-redis.conf
+.dockerignore
+/node_modules
 README.md
+docker*
+Dockerfile
