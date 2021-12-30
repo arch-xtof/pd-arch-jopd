@@ -4,7 +4,6 @@ const redis = require("redis");
 const { dashboardToData } = require("./utils/dashboardToData");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
-const morgan = require('morgan');
 
 const client = redis.createClient({
   url: `${process.env.REDIS_URL}`,
@@ -18,7 +17,6 @@ const client = redis.createClient({
 const apiUrl = process.env.API_URL;
 const app = express();
 
-app.use(morgan('combined'))
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get("/api/dashboards/:uid", async (request, response) => {
