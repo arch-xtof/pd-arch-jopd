@@ -1,6 +1,7 @@
 const express = require("express");
 const axios = require("axios");
 const redis = require("redis");
+const cors = require("cors");
 const { dashboardToData } = require("./utils/dashboardToData");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
@@ -11,6 +12,7 @@ const client = redis.createClient({
 
 (async () => {
   client.on("error", (err) => console.log("Redis Client Error", err));
+  client.on("connect", (err) => console.log("Redis Connected"));
   await client.connect();
 })();
 
@@ -18,9 +20,15 @@ const apiUrl = process.env.API_URL;
 const app = express();
 
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(cors());
 
 app.get("/api/dashboards/:uid", async (request, response) => {
   try {
+    response.header("Access-Control-Allow-Origin", "*");
+    response.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
+    );
     let uid = request.params.uid;
     if (uid?.length >= 40) {
       return response.status(400).send({
