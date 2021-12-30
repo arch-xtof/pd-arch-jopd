@@ -2,27 +2,27 @@ version: "3.6"
 services:
   redis:
     image: redis
-    container_name: cache
+    container_name: cache-test
     command: redis-server
     expose:
       - 6379
     environment:
       - REDIS_REPLICATION_MODE=master
       - ALLOW_EMPTY_PASSWORD=yes
-    restart: on-failure:5
 
   app:
     build:
       context: ./
-      target: prod
-    command: npm run start:prod
+      target: dev
+    volumes:
+      - .:/src
+    command: npm run test
     ports:
-      - "80:3001"
+      - "3001:3001"
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - DEBUG=pd-arch-jopd:*
       - API_URL=http://play.grafana.org
-      - REDIS_URL=redis://cache
+      - REDIS_URL=redis://cache-test
     links:
       - redis
-    restart: on-failure:5

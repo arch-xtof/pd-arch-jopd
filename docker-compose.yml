@@ -2,7 +2,7 @@ version: "3.6"
 services:
   redis:
     image: redis
-    container_name: cache
+    container_name: cache-dev
     command: redis-server
     expose:
       - 6379
@@ -16,13 +16,13 @@ services:
       target: dev
     volumes:
       - .:/src
-    command: npm run dev
+    command: npm run start:dev
     ports:
       - "3001:3001"
     environment:
       - NODE_ENV=development
       - DEBUG=pd-arch-jopd:*
       - API_URL=http://play.grafana.org
-      - REDIS_URL=redis://cache
+      - REDIS_URL=redis://cache-dev
     links:
       - redis

@@ -5,7 +5,7 @@ WORKDIR /src
 COPY package*.json /
 EXPOSE 3001
 
-FROM base as production
+FROM base as prod
 WORKDIR /usr/app
 ENV NODE_ENV=production
 RUN npm ci
