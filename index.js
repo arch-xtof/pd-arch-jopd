@@ -1,11 +1,10 @@
 const express = require("express");
 const axios = require("axios");
 const redis = require("redis");
-const dash = require("./utils/dashboardToData");
+const { dashboardToData } = require("./utils/dashboardToData");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
 const morgan = require('morgan');
-const { dashboardToData } = require("./utils/dashboardToData");
 
 const client = redis.createClient({
   url: `${process.env.REDIS_URL}`,
@@ -27,7 +26,7 @@ app.get("/api/dashboards/:uid", async (request, response) => {
     let uid = request.params.uid;
     if (uid?.length >= 40) {
       return response.status(400).send({
-        message: `uid can't be longer than 40 characters`,
+        message: "uid can't be longer than 40 characters",
       });
     }
 
@@ -40,7 +39,7 @@ app.get("/api/dashboards/:uid", async (request, response) => {
         const axiosResponse = await axios.get(
           `${apiUrl}/api/dashboards/uid/${uid}`
         );
-        dashboardInfo = dash.dashboardToData(axiosResponse.data);
+        dashboardInfo = dashboardToData(axiosResponse.data);
         response.status(200).send(dashboardInfo);
         await client.set(uid, JSON.stringify(dashboardInfo));
       } catch (error) {
@@ -57,3 +56,5 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
+module.exports = app;
