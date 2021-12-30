@@ -17,7 +17,7 @@ services:
       target: prod
     command: npm run start:prod
     ports:
-      - "80:3001"
+      - "3001:3001"
     environment:
       - NODE_ENV=production
       - DEBUG=pd-arch-jopd:*
