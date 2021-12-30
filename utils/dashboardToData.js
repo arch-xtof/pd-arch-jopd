@@ -1,6 +1,5 @@
 function dashboardToData(data, apiUrl) {
   try {
-    let myMap = new Map(Object.entries(data));
     const responseObject = {};
 
     responseObject.uid = data.dashboard.uid;
@@ -9,7 +8,7 @@ function dashboardToData(data, apiUrl) {
     responseObject.folderName = data.meta.folderTitle;
     responseObject.datasources = [];
 
-    myMap.get("dashboard").panels.find((e) => {
+    data.dashboard.panels.find((e) => {
       if (
         e?.datasource &&
         !responseObject.datasources.some((t) => {
@@ -35,7 +34,7 @@ function dashboardToData(data, apiUrl) {
     return responseObject;
   } catch (error) {
     console.log(error);
-    return { message: "dashboard is malformed"}
+    return { message: "dashboard is malformed" };
   }
 }
 
