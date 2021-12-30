@@ -33,7 +33,7 @@ function dashboardToData(data, apiUrl) {
 
     return responseObject;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     return { message: "dashboard is malformed" };
   }
 }
