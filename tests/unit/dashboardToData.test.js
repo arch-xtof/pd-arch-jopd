@@ -1,4 +1,4 @@
-const dash = require("../utils/dashboardToData");
+const dash = require("../../utils/dashboardToData");
 
 const oneDataOnePanel = {
   meta: {
@@ -194,41 +194,34 @@ const resMulDataMulPanel = {
 };
 
 describe("dashboardToData", () => {
-  beforeAll(() => {});
 
-  afterAll(() => {});
+  it("one datasource one panel", () => {
+    expect(JSON.stringify(dash.dashboardToData(oneDataOnePanel, ""))).toBe(
+      JSON.stringify(resOneDataOnePanel)
+    );
+  });
 
-  describe("transformation", () => {
-    beforeEach(() => {});
+  it("one datasource multiple panels", () => {
+    expect(JSON.stringify(dash.dashboardToData(oneDataMulPanel, ""))).toBe(
+      JSON.stringify(resOneDataMulPanel)
+    );
+  });
 
-    it("one datasource one panel", () => {
-      expect(JSON.stringify(dash.dashboardToData(oneDataOnePanel, ""))).toBe(
-        JSON.stringify(resOneDataOnePanel)
-      );
-    });
+  it("multiple datasources one panel", () => {
+    expect(JSON.stringify(dash.dashboardToData(mulDataOnePanel, ""))).toBe(
+      JSON.stringify(resMulDataOnePanel)
+    );
+  });
 
-    it("one datasource multiple panels", () => {
-      expect(JSON.stringify(dash.dashboardToData(oneDataMulPanel, ""))).toBe(
-        JSON.stringify(resOneDataMulPanel)
-      );
-    });
+  it("multiple datasources multiple panels", () => {
+    expect(JSON.stringify(dash.dashboardToData(mulDataMulPanel, ""))).toBe(
+      JSON.stringify(resMulDataMulPanel)
+    );
+  });
 
-    it("multiple datasources one panel", () => {
-      expect(JSON.stringify(dash.dashboardToData(mulDataOnePanel, ""))).toBe(
-        JSON.stringify(resMulDataOnePanel)
-      );
-    });
-
-    it("multiple datasources multiple panels", () => {
-      expect(JSON.stringify(dash.dashboardToData(mulDataMulPanel, ""))).toBe(
-        JSON.stringify(resMulDataMulPanel)
-      );
-    });
-
-    it("malformed dashboard file", () => {
-      expect(JSON.stringify(dash.dashboardToData({random: "malformation"}, ""))).toBe(
-        JSON.stringify({ message: "dashboard is malformed"})
-      );
-    });
+  it("malformed dashboard file", () => {
+    expect(
+      JSON.stringify(dash.dashboardToData({ random: "malformation" }, ""))
+    ).toBe(JSON.stringify({ message: "dashboard is malformed" }));
   });
 });
