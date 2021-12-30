@@ -1,5 +1,5 @@
 const index = require("../../index");
-const request = require("supertest")(index);
+const request = require("supertest")(index.server);
 
 const uidExists = "000000012";
 const uidNotExists = "notfound";
@@ -56,4 +56,9 @@ describe("API Integration", () => {
         done();
       });
   });
+});
+
+afterAll(() => {
+  index.server.close();
+  index.client.quit();
 });
