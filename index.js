@@ -24,11 +24,6 @@ app.use(cors());
 
 app.get("/api/dashboards/:uid", async (request, response) => {
   try {
-    response.header("Access-Control-Allow-Origin", "*");
-    response.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept"
-    );
     let uid = request.params.uid;
     if (uid?.length >= 40) {
       return response.status(400).send({
