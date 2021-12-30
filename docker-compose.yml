@@ -1,6 +1,6 @@
 version: "3.6"
 services:
-  redis:
+  redis-dev:
     image: redis
     container_name: cache-dev
     command: redis-server
@@ -10,7 +10,7 @@ services:
       - REDIS_REPLICATION_MODE=master
       - ALLOW_EMPTY_PASSWORD=yes
 
-  app:
+  app-dev:
     build:
       context: ./
       target: dev
@@ -25,4 +25,4 @@ services:
       - API_URL=http://play.grafana.org
       - REDIS_URL=redis://cache-dev
     links:
-      - redis
+      - redis-dev
