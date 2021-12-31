@@ -1,4 +1,18 @@
 # pd-arch-jopd
+**Table of Contents**
+- [Thought Process](#thought-process)
+  - [Programing language](#programing-language)
+  - [Backend and Frontend](#backend-and-frontend)
+  - [Choosing containerisation](#choosing-containerisation)
+  - [Caching](#caching)
+  - [Tests](#tests)
+- [Core](#core)
+  - [Application](#application)
+    - [Logic](#logic)
+    - [Specifications](#specifications)
+  - [Containerization](#containerization)
+- [Launch instructions](#launch-instructions)
+- [Further Development](#further-development)
 ## Thought Process
 ### Programing language
 The first challenge of this task was choosing the appropriate programming language and framework. After the first interview, I had three variants on my mind: 
@@ -38,6 +52,44 @@ Everytime user issues API call the follwing happens:
     * transform
     * cache
     * return
+
+Output will be formatted in the following way
+```json
+{
+  uid: "uid",
+  title: "title",
+  url: "url",
+  folderName: "folderTitle",
+  datasources: [
+    {
+      name: "datasource-1",
+      panels: [
+        {
+          id: 1,
+          title: "panel-1",
+        },
+        {
+          id: 2,
+          title: "panel-2",
+        },
+      ],
+    },
+    {
+      name: "datasource-2",
+      panels: [
+        {
+          id: 3,
+          title: "panel-3",
+        },
+        {
+          id: 4,
+          title: "panel-4",
+        },
+      ],
+    },
+  ],
+}
+```
 
 #### Specifications
 Application on default is available on port `3001`
@@ -87,10 +139,10 @@ cd pd-arch-jopd
 docker-compose -f docker-compose-prod.yml up --build
 ```
 
-Application will become available at `localhost:3001/swagger/`. Substitute localhost with ip or domain if needed.
+Application will become available at http://localhost:3001/swagger/. Substitute localhost with ip or domain if needed. Or you can directly use http://localhost:3001/api/dashboards/:uid endpoint
 
 ## Further Development
-If someone randomly becomes interested in further development of this applications, here are additional commads.
+If someone randomly becomes interested in further development of this application, here are additional commads.
 
 **Run in development mode**
 
