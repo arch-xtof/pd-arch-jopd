@@ -136,6 +136,7 @@ cd pd-arch-jopd
 
 **Run in production mode**
 ```bash
+export BASE_HOST=localhost #In case CORS problems appear export API domain or ip here
 docker-compose -f docker-compose-prod.yml up --build
 ```
 

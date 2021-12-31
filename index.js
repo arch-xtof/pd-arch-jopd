@@ -16,6 +16,9 @@ const client = redis.createClient({
   await client.connect();
 })();
 
+const PORT = process.env.PORT || 3001;
+const HOST = process.env.BASE_HOST || "localhost";
+swaggerDocument.host = HOST + ":" + PORT;
 const apiUrl = process.env.API_URL;
 const app = express();
 
@@ -53,7 +56,6 @@ app.get("/api/dashboards/:uid", async (request, response) => {
   }
 });
 
-const PORT = process.env.PORT || 3001;
 const server = app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
