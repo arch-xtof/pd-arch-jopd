@@ -54,7 +54,7 @@ Everytime user issues API call the follwing happens:
     * return
 
 Output will be formatted in the following way
-```json
+```js
 {
   uid: "uid",
   title: "title",
