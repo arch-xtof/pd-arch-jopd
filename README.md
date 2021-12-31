@@ -42,6 +42,7 @@ The application backend is written with somewhat respecting RESTful principles. 
 **Logic Diagram:**
 
 ![service.png](img/service.png)
+
 Everytime user issues API call the follwing happens:
 * **uid** is verified
   * return 400 in case of problems
@@ -105,7 +106,7 @@ As for testing following libraries are used
 * SuperTest - ingeration testing
 
 ### Containerization
-docker-compose with 2 Docker containers is used.
+docker-compose with 2 docker containers is used.
 ![docker-compose.png](img/docker-compose.png)
 
 ## Launch instructions
@@ -143,7 +144,7 @@ docker-compose -f docker-compose-prod.yml up --build
 Application will become available at http://localhost:3001/swagger/. Substitute localhost with ip or domain if needed. Or you can directly use http://localhost:3001/api/dashboards/:uid endpoint
 
 ## Further Development
-If someone randomly becomes interested in further development of this application, here are additional commads.
+If someone randomly becomes interested in further development of this application, here are additional commads. Obviously you will need to install NodeJS and npm
 
 **Run in development mode**
 
@@ -154,5 +155,7 @@ docker-compose up --build
 
 **Run tests**
 ```bash
-docker-compose -f docker-compose-test.yml up --build
+npm test:unit #Only unit
+
+docker-compose -f docker-compose-test.yml up --build #Integration
 ```
